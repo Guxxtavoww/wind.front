@@ -6,6 +6,7 @@ import { ThemeProvider } from '@/providers/theme.provider';
 import { TanstackQueryProvider } from '@/providers/tanstack-query.provider';
 
 import './globals.css';
+import { Footer } from './_components/footer';
 
 const interSans = Inter({
   variable: '--app-font',
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: WithChildren) {
           >
             {children}
             <Toaster />
+            <Footer />
           </ThemeProvider>
         </TanstackQueryProvider>
       </body>

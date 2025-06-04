@@ -116,7 +116,7 @@
   }
 
   body {
-    @apply w-screen min-h-svh overflow-x-hidden;
+    @apply w-screen min-h-svh overflow-x-hidden relative;
   }
 
   img {
