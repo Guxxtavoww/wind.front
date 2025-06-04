@@ -114,6 +114,14 @@
   * {
     @apply bg-background text-foreground font-(family-name:--app-font);
   }
+
+  body {
+    @apply w-screen min-h-svh overflow-x-hidden;
+  }
+
+  img {
+    @apply select-none;
+  }
 }
 
 @layer utilities {
