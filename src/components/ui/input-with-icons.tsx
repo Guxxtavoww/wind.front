@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
-import { type InputProps, Input } from './input';
 import { cn } from '@/utils/cn.util';
+
+import { type InputProps, Input } from './input';
 import { type Icon, LucideIcon } from '../app/lucide-icon';
 
 export interface InputWithIconsProps extends InputProps {
@@ -14,6 +14,12 @@ export function InputWithIcons({
   className,
   ...rest
 }: InputWithIconsProps) {
+  if (!leftIcon && !rightIcon) {
+    throw new Error(
+      'At least one icon (leftIcon or rightIcon) must be provided.'
+    );
+  }
+
   return (
     <div className="relative">
       {leftIcon && (

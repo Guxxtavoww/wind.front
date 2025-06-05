@@ -25,7 +25,7 @@ export default function RootLayout({ children }: WithChildren) {
         <TanstackQueryProvider>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
+            defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
           >

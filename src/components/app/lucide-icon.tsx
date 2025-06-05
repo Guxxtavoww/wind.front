@@ -6,7 +6,7 @@ import {
 import type { LucideProps } from 'lucide-react';
 import { cva, type VariantProps } from 'class-variance-authority';
 
-const lucideIconVariants = cva('transition-all select-none', {
+const lucideIconVariants = cva('transition-all select-none bg-transparent', {
   variants: {
     size: {
       default: '!h-4.5 !w-4.5',
