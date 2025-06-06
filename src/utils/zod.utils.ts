@@ -7,7 +7,7 @@ import { isNullableValue } from './is-nullable-value.util';
 export function createNullableTransform<
   TOutput = any,
   TDef extends ZodTypeDef = ZodTypeDef,
-  TInput = TOutput,
+  TInput = TOutput
 >(schema: ZodSchema<TOutput, TDef, TInput>) {
   return schema
     .optional()
@@ -37,14 +37,14 @@ export const sortSchema = stringSchema
   .transform((val) => val as `${string}.${'ASC' | 'DESC' | 'asc' | 'desc'}`);
 
 export const integerNumberSchema = numberSchema.int(
-  'Esse número não pode ser quebrado',
+  'Esse número não pode ser quebrado'
 );
 
 export const floatNumberSchema = numberSchema.transform((value) =>
-  parseFloat(String(value)),
+  parseFloat(String(value))
 );
 
-export const booleanSchema = z.boolean();
+export const booleanSchema = z.boolean({ message: 'Esse valor é obrigatório' });
 
 export const stringToNumberSchema = stringSchema
   .refine((value) => !Number.isNaN(+value))
@@ -62,7 +62,7 @@ export const cpfOrCnpjStringSchema = stringSchema.refine(
 
     return false;
   },
-  { message: 'Cpf ou cnpj inválido' },
+  { message: 'Cpf ou cnpj inválido' }
 );
 
 export const stringToIntegerSchema = stringSchema
@@ -74,7 +74,7 @@ export const stringToIntegerSchema = stringSchema
 
       return Number.isInteger(numberfyedValue);
     },
-    { message: 'O valor deve ser inteiro' },
+    { message: 'O valor deve ser inteiro' }
   )
   .transform(Number);
 
@@ -87,7 +87,7 @@ export const stringToFloatSchema = stringSchema
 
       return true;
     },
-    { message: 'O valor deve ser um número válido' },
+    { message: 'O valor deve ser um número válido' }
   )
   .transform((value) => parseFloat(value));
 
@@ -118,7 +118,7 @@ export const passwordSchema = stringSchema
   .min(8, 'Password must be at least 8 characters long')
   .regex(
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]+$/,
-    'A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial',
+    'A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial'
   );
 
 export const zipCodeStringSchema = stringSchema
@@ -137,7 +137,7 @@ export const futureDatetimeSchema = datetimeStringSchema.refine(
     // Verifica se a data inserida é posterior à data atual
     return datefyedValue > currentDate;
   },
-  { message: 'A data deve ser no futuro' },
+  { message: 'A data deve ser no futuro' }
 );
 
 /**
@@ -151,7 +151,7 @@ export const optionalEmailStringSchema =
 export const optionalStringSchema = createNullableTransform(stringSchema);
 
 export const optionalCpfOrCnpjStringSchema = createNullableTransform(
-  cpfOrCnpjStringSchema,
+  cpfOrCnpjStringSchema
 );
 
 export const optionalZipCodeStringSchema =
@@ -163,7 +163,7 @@ export const optionalStringToNumberSchema =
 export const optionalPasswordSchema = createNullableTransform(passwordSchema);
 
 export const optionalPhoneNumberStringSchema = createNullableTransform(
-  phoneNumberStringSchema,
+  phoneNumberStringSchema
 );
 
 export const optionalUuidSchema = createNullableTransform(uuidSchema);
@@ -177,7 +177,7 @@ export const optionalFloatNumberSchema =
   createNullableTransform(floatNumberSchema);
 
 export const optionalPaginationParamSchema = createNullableTransform(
-  paginationParamSchema,
+  paginationParamSchema
 );
 
 export const optionalSortSchema = createNullableTransform(sortSchema);
@@ -203,5 +203,5 @@ export const optionalStringToFloatSchema =
   createNullableTransform(stringToFloatSchema);
 
 export const optionalStringToIntegerSchema = createNullableTransform(
-  stringToIntegerSchema,
+  stringToIntegerSchema
 );

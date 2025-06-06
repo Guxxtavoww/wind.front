@@ -65,7 +65,7 @@ export function PurchaseOrderSidebarMenu({
                                 (active === undefined &&
                                   pathname.startsWith(href)) ||
                                 active
-                                  ? 'default'
+                                  ? index === 0 && pathname.length > 19 ? 'ghost' : 'default'
                                   : 'ghost'
                               }
                               className="w-full justify-start h-10 mb-1"

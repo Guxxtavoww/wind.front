@@ -48,6 +48,11 @@ export function AppInputField({
 
   const isNumberInput = useMemo(() => type === 'number', [type]);
 
+  const isSubmitting = useMemo(
+    () => field.form.state.isSubmitting,
+    [field.form.state]
+  );
+
   const applyMask = useCallback(
     (value: string) => {
       if (isNumberInput) return value;
@@ -65,7 +70,11 @@ export function AppInputField({
 
   return (
     <FormItem className={clsx(formItemClassName)}>
-      {label ? <Label htmlFor={fieldId}>{label}</Label> : null}
+      {label ? (
+        <Label htmlFor={fieldId} aria-disabled={isSubmitting}>
+          {label}
+        </Label>
+      ) : null}
       {type === 'textarea' ? (
         <Textarea
           id={fieldId}
@@ -76,6 +85,7 @@ export function AppInputField({
           autoComplete={`current-${field.name}`}
           onChange={(e) => field.handleChange(applyMask(e.target.value))}
           autoFocus={autoFocus}
+          disabled={isSubmitting}
         />
       ) : (
         <Input
@@ -87,6 +97,7 @@ export function AppInputField({
           type={type}
           autoComplete={`current-${field.name}`}
           autoFocus={autoFocus}
+          disabled={isSubmitting}
           onChange={(e) => {
             let value: string | number = e.target.value;
 

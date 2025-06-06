@@ -9,6 +9,7 @@ import { Switch } from '../ui/switch';
 import { FormItem } from '../ui/form-item';
 import { Checkbox } from '../ui/checkbox';
 import { FieldInfo } from '../app/field-info';
+import { useMemo } from 'react';
 
 export interface IAppBooleanFieldProps {
   field: AnyFieldApi;
@@ -24,15 +25,23 @@ export function AppBooleanField({
   const fieldId = useFieldId(field.name);
   const Comp = type === 'checkbox' ? Checkbox : Switch;
 
+  const isSubmitting = useMemo(
+    () => field.form.state.isSubmitting,
+    [field.form.state]
+  );
+
   return (
     <FormItem>
-      <Label htmlFor={fieldId}>{label}</Label>
+      <Label htmlFor={fieldId} aria-disabled={isSubmitting}>
+        {label}
+      </Label>
       <Comp
         checked={field.state.value}
         onCheckedChange={field.handleChange}
         onBlur={field.handleBlur}
         name={field.name}
         id={fieldId}
+        disabled={isSubmitting}
       />
       <FieldInfo field={field} />
     </FormItem>
