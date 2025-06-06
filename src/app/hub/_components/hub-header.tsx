@@ -11,16 +11,16 @@ import { CustomTooltip } from '@/components/app/custom-tooltip';
 
 function useHubHeader() {
   const pathname = usePathname();
-  const [title, setTitle] = useState(() => document?.title);
+  const [title, setTitle] = useState<string>();
 
   useEffect(() => {
-    setTitle(document.title);
+    setTitle(document?.title);
   }, [pathname]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (document.title !== title) {
-        setTitle(document.title);
+        setTitle(document?.title);
       }
     }, 500);
 
