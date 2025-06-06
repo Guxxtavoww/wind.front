@@ -19,7 +19,7 @@ export function PurchaseOrderSidebar() {
   return (
     <aside
       className={cn(
-        'fixed top-20 left-0 z-20 h-[calc(100svh-5rem)] -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300 bg-widget-bg',
+        'fixed top-20 left-0 z-20 h-(--content-height) -translate-x-full lg:translate-x-0 transition-[width] ease-in-out duration-300 bg-widget-bg',
         !openState ? 'w-[90px]' : 'w-72',
         settings.disabled && 'hidden'
       )}

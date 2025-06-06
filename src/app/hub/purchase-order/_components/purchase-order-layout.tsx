@@ -18,7 +18,7 @@ export function PurchaseOrderLayout({ children }: WithChildren) {
       <PurchaseOrderSidebar />
       <main
         className={cn(
-          'transition-[margin-left] ease-in-out duration-300',
+          'transition-[margin-left] ease-in-out duration-300 min-h-(--content-height)',
           !settings.disabled && (!getOpenState() ? 'lg:ml-[90px] w-[calc(100%-90px)]' : 'lg:ml-72 w-[calc(100%-18rem)]')
         )}
       >

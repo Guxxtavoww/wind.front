@@ -39,6 +39,7 @@
 
   /* Customs */
   --widget-bg: #f8f8f8;
+  --content-height: calc(100svh - 5rem);
 }
 
 @theme inline {
