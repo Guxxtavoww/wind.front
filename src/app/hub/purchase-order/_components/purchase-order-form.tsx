@@ -130,7 +130,12 @@ export function PurchaseOrderForm() {
       <form.AppField
         name="is_contract"
         children={(field) => (
-          <AppBooleanField type="checkbox" field={field} label="Contrato" />
+          <AppBooleanField
+            type="checkbox"
+            field={field}
+            label="Contrato"
+            className="flex-row"
+          />
         )}
       />
 
