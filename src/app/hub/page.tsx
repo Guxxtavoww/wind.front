@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function HubPage() {
   return (
-    <div className="flex flex-col gap-5 items-center justify-center h-full w-full">
+    <div className="flex flex-col gap-5 items-center justify-center h-full w-full absolute inset-0">
       <AppLink
         href="/hub/purchase-order"
         className="!rounded-full"

@@ -119,7 +119,7 @@
 
 @layer base {
   * {
-    @apply text-foreground font-(family-name:--app-font);
+    @apply font-(family-name:--app-font);
   }
 
   body {

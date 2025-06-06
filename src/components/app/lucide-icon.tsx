@@ -12,7 +12,7 @@ const lucideIconVariants = cva('transition-all select-none bg-transparent', {
       default: '!h-4.5 !w-4.5',
       sm: '!h-3.5 !w-3.5',
       lg: '!h-8 !w-8',
-      medium_large: '!h-10 !w-10',
+      medium_xl: '!h-10 !w-10',
       xl: '!h-12 !w-12',
       xs: '!w-2 !h-2',
     },
