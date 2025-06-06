@@ -134,7 +134,7 @@ export function PurchaseOrderForm() {
             type="checkbox"
             field={field}
             label="Contrato"
-            className="flex-row"
+            className="!flex-row"
           />
         )}
       />
