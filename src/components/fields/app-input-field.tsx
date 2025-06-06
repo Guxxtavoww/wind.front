@@ -1,3 +1,4 @@
+import { clsx, type ClassValue } from 'clsx';
 import { useCallback, useMemo } from 'react';
 import type { AnyFieldApi } from '@tanstack/react-form';
 
@@ -14,6 +15,8 @@ export interface IAppInputFieldBaseProps {
   field: AnyFieldApi;
   label?: string;
   placeholder: string;
+  formItemClassName?: ClassValue;
+  autoFocus?: boolean;
 }
 
 // Text/textarea variant with maskFn
@@ -37,6 +40,8 @@ export function AppInputField({
   type,
   label,
   placeholder,
+  autoFocus,
+  formItemClassName,
   ...props
 }: AppInputFieldProps) {
   const fieldId = useFieldId(field.name);
@@ -59,7 +64,7 @@ export function AppInputField({
   );
 
   return (
-    <FormItem>
+    <FormItem className={clsx(formItemClassName)}>
       {label ? <Label htmlFor={fieldId}>{label}</Label> : null}
       {type === 'textarea' ? (
         <Textarea
@@ -70,6 +75,7 @@ export function AppInputField({
           onBlur={field.handleBlur}
           autoComplete={`current-${field.name}`}
           onChange={(e) => field.handleChange(applyMask(e.target.value))}
+          autoFocus={autoFocus}
         />
       ) : (
         <Input
@@ -80,6 +86,7 @@ export function AppInputField({
           onBlur={field.handleBlur}
           type={type}
           autoComplete={`current-${field.name}`}
+          autoFocus={autoFocus}
           onChange={(e) => {
             let value: string | number = e.target.value;
 
