@@ -32,6 +32,7 @@ export function AppBooleanField({
         onCheckedChange={field.handleChange}
         onBlur={field.handleBlur}
         name={field.name}
+        id={fieldId}
       />
       <FieldInfo field={field} />
     </FormItem>
