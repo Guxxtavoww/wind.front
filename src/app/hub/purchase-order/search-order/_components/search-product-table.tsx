@@ -8,16 +8,20 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
 } from '@tanstack/react-table';
 
-import { getSearchProductsTableColumns } from './search-product-table-columns';
 import { DataTable } from '@/components/app/data-table';
+import { useDataTable } from '@/hooks/use-data-table.hook';
+
+import {
+  getSearchProductsTableColumns,
+  IProduct,
+} from './search-product-table-columns';
 
 export function SearchProductTable() {
   const columns = useMemo(() => getSearchProductsTableColumns(), []);
 
-  const table = useReactTable({
+  const table = useDataTable<IProduct>({
     columns,
     data: [
       {
@@ -51,13 +55,8 @@ export function SearchProductTable() {
         solicitor: 'David Lee',
       },
     ],
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    // getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-    enableRowSelection: true,
+    getRowId: (originalRow) => originalRow.internal_code,
+    pageCount: 1,
   });
 
   return <DataTable table={table} className="px-3" hasPagination={false} />;

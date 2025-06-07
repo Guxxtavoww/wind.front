@@ -23,7 +23,7 @@ function TableHeader({ className, ...props }: ComponentProps<'thead'>) {
   return (
     <thead
       data-slot="table-header"
-      className={cn('[&_tr]:border-b', className)}
+      className={cn('[&_tr]:border-b [&_tr]:border-input', className)}
       {...props}
     />
   );
@@ -44,7 +44,7 @@ function TableFooter({ className, ...props }: ComponentProps<'tfoot'>) {
     <tfoot
       data-slot="table-footer"
       className={cn(
-        'bg-muted/50 border-t font-medium [&>tr]:last:border-b-0',
+        'bg-muted/50 border border-input font-medium [&>tr]:last:border-b-0',
         className
       )}
       {...props}
@@ -57,7 +57,7 @@ function TableRow({ className, ...props }: ComponentProps<'tr'>) {
     <tr
       data-slot="table-row"
       className={cn(
-        'hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors',
+        'hover:bg-muted/50 data-[state=selected]:bg-muted border-b border-b-input transition-colors',
         className
       )}
       {...props}

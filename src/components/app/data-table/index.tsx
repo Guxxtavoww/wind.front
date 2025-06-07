@@ -46,7 +46,7 @@ export function DataTable<TData>({
       {...props}
     >
       {children}
-      <div className="overflow-hidden rounded-md border">
+      <div className="overflow-hidden rounded-md border border-input">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
