@@ -6,7 +6,7 @@ export function FieldInfo({ field }: { field: AnyFieldApi }) {
   return (
     <>
       {field.state.meta.isTouched && field.state.meta.errors.length ? (
-        <em className="text-sm text-red-600">
+        <em className="text-sm text-destructive">
           {[...new Set(field.state.meta.errors.map((err) => err.message))].join(
             ', '
           )}
