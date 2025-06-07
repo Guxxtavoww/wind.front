@@ -1,14 +1,6 @@
 'use client';
 
 import { useMemo } from 'react';
-import {
-  getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-} from '@tanstack/react-table';
 
 import { DataTable } from '@/components/app/data-table';
 import { useDataTable } from '@/hooks/use-data-table.hook';
@@ -21,7 +13,7 @@ import {
 export function SearchProductTable() {
   const columns = useMemo(() => getSearchProductsTableColumns(), []);
 
-  const table = useDataTable<IProduct>({
+  const { table } = useDataTable<IProduct>({
     columns,
     data: [
       {
@@ -57,6 +49,11 @@ export function SearchProductTable() {
     ],
     getRowId: (originalRow) => originalRow.internal_code,
     pageCount: 1,
+    shallow: false,
+    clearOnDefault: true,
+    initialState: {
+      sorting: [{ id: 'date', desc: true }],
+    },
   });
 
   return <DataTable table={table} className="px-3" hasPagination={false} />;
