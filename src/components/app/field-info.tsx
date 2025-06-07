@@ -2,7 +2,11 @@ import type { AnyFieldApi } from '@tanstack/react-form';
 
 import { Loader } from './loader';
 
-export function FieldInfo({ field }: { field: AnyFieldApi }) {
+interface FieldInfoProps {
+  field: AnyFieldApi;
+}
+
+export function FieldInfo({ field }: FieldInfoProps) {
   return (
     <>
       {field.state.meta.isTouched && field.state.meta.errors.length ? (

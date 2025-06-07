@@ -7,9 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function PurchaseOrderPage() {
-  return (
-    <div className="w-full min-h-(--content-height) flex justify-center items-center p-5">
-      <PurchaseOrderForm />
-    </div>
-  );
+  return <PurchaseOrderForm />;
 }

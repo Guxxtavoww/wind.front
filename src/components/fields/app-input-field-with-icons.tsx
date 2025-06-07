@@ -18,7 +18,6 @@ export interface IAppInputFieldBaseProps extends InputWithIconsProps {
   placeholder: string;
 }
 
-// Text/textarea variant with maskFn
 export interface IAppInputFieldTextProps extends IAppInputFieldBaseProps {
   type: 'text';
   maskFn?: (value: string) => string;
@@ -30,11 +29,11 @@ export interface IAppInputFieldNumberProps extends IAppInputFieldBaseProps {
 }
 
 // Discriminated union type
-export type AppInputFieldProps =
+export type AppInputFieldWithIconsProps =
   | IAppInputFieldTextProps
   | IAppInputFieldNumberProps;
 
-export function AppInputField({
+export function AppInputFieldWithIcons({
   field,
   type,
   label,
@@ -42,7 +41,7 @@ export function AppInputField({
   leftIcon,
   rightIcon,
   ...props
-}: AppInputFieldProps) {
+}: AppInputFieldWithIconsProps) {
   const fieldId = useFieldId(field.name);
 
   const isNumberInput = useMemo(() => type === 'number', [type]);
