@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from '@/providers/theme.provider';
@@ -22,18 +23,20 @@ export default function RootLayout({ children }: WithChildren) {
   return (
     <html lang="pt-br" suppressHydrationWarning>
       <body className={`${interSans.variable} antialiased`}>
-        <TanstackQueryProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-            <Toaster />
-            <Footer />
-          </ThemeProvider>
-        </TanstackQueryProvider>
+        <NuqsAdapter>
+          <TanstackQueryProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+              <Toaster />
+              <Footer />
+            </ThemeProvider>
+          </TanstackQueryProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );
