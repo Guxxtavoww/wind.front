@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
 import type { ReactNode, Dispatch, SetStateAction } from 'react';
+import type { ColumnSort } from '@tanstack/react-table';
+
+import type { DataTableConfig } from '@/components/app/data-table/utils';
 
 declare global {
   export type NullableValue<T> = T | null;
@@ -55,6 +58,10 @@ declare global {
     isMulti?: boolean;
   }
 
+  export interface ExtendedColumnSort<TData> extends Omit<ColumnSort, 'id'> {
+    id: Extract<keyof TData, string>;
+  }
+
   export type ObjectKeys<T extends Record<string, unknown>, Key = keyof T> =
     // Check if key is a string.
     Key extends string
@@ -91,4 +98,8 @@ declare global {
     error: Error & { digest?: string };
     reset: () => void;
   };
+
+  export type FilterOperator = DataTableConfig['operators'][number];
+  export type FilterVariant = DataTableConfig['filterVariants'][number];
+  export type JoinOperator = DataTableConfig['joinOperators'][number];
 }

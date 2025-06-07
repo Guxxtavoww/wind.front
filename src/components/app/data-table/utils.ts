@@ -50,6 +50,23 @@ export const dataTableConfig = {
         'Uma barra flutuante que fica fixa no topo da tabela.',
     },
   ],
+  joinOperators: ['and', 'or'] as const,
+  operators: [
+    'iLike',
+    'notILike',
+    'eq',
+    'ne',
+    'inArray',
+    'notInArray',
+    'isEmpty',
+    'isNotEmpty',
+    'lt',
+    'lte',
+    'gt',
+    'gte',
+    'isBetween',
+    'isRelativeToToday',
+  ] as const,
 };
 
 export function getCommonPinningStyles<TData>({

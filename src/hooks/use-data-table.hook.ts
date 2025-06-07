@@ -1,197 +1,272 @@
 'use client';
 
-import { z } from 'zod';
 import {
+  type ColumnFiltersState,
+  type PaginationState,
+  type RowSelectionState,
+  type SortingState,
+  type TableOptions,
+  type TableState,
+  type Updater,
+  type VisibilityState,
   getCoreRowModel,
+  getFacetedMinMaxValues,
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-  type ColumnFiltersState,
-  type PaginationState,
-  type SortingState,
-  type TableOptions,
-  type TableState,
-  type VisibilityState,
 } from '@tanstack/react-table';
-import { useState, useMemo, useEffect } from 'react';
-
 import {
-  optionalStringSchema,
-  optionalStringToNumberSchema,
-} from '@/utils/zod.utils';
-import { useDebounce } from '@/hooks/use-debounce.hook';
+  type Parser,
+  type UseQueryStateOptions,
+  parseAsArrayOf,
+  parseAsInteger,
+  parseAsString,
+  useQueryState,
+  useQueryStates,
+} from 'nuqs';
+import {
+  type TransitionStartFunction,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 
-import { useSearchParamsManager } from './use-search-params-manager.hook';
+import { useDebouncedCallback } from '@/hooks/use-debounce-callback.hook';
+import { getSortingStateParser } from '@/utils/get-sorting-state-parser.util';
 
-type UseDataTablePropsExteds<TData> = Omit<
-  TableOptions<TData>,
-  | 'pageCount'
-  | 'getCoreRowModel'
-  | 'manualFiltering'
-  | 'manualPagination'
-  | 'manualSorting'
-> &
-  Required<Pick<TableOptions<TData>, 'pageCount'>>;
+const PAGE_KEY = 'page';
+const PER_PAGE_KEY = 'perPage';
+const SORT_KEY = 'sort';
+const ARRAY_SEPARATOR = ',';
+const DEBOUNCE_MS = 300;
+const THROTTLE_MS = 50;
 
-interface UseDataTableProps<TData> extends UseDataTablePropsExteds<TData> {
-  filterFields?: DataTableFilterField<TData>[];
-  enableAdvancedFilter?: boolean;
+interface UseDataTableProps<TData>
+  extends Omit<
+      TableOptions<TData>,
+      | 'state'
+      | 'pageCount'
+      | 'getCoreRowModel'
+      | 'manualFiltering'
+      | 'manualPagination'
+      | 'manualSorting'
+    >,
+    Required<Pick<TableOptions<TData>, 'pageCount'>> {
   initialState?: Omit<Partial<TableState>, 'sorting'> & {
-    sorting?: {
-      id: Extract<keyof TData, string>;
-      desc: boolean;
-    }[];
+    sorting?: ExtendedColumnSort<TData>[];
   };
+  history?: 'push' | 'replace';
+  debounceMs?: number;
+  throttleMs?: number;
+  clearOnDefault?: boolean;
+  enableAdvancedFilter?: boolean;
+  scroll?: boolean;
+  shallow?: boolean;
+  startTransition?: TransitionStartFunction;
 }
 
-const searchParamsSchema = z.object({
-  page: optionalStringToNumberSchema.default('1'),
-  limit: optionalStringToNumberSchema,
-  sort: optionalStringSchema,
-});
-
 export function useDataTable<TData>({
+  columns,
   pageCount = -1,
-  filterFields = [],
+  initialState,
+  history = 'replace',
+  debounceMs = DEBOUNCE_MS,
+  throttleMs = THROTTLE_MS,
+  clearOnDefault = false,
   enableAdvancedFilter = false,
-  ...props
+  scroll = false,
+  shallow = true,
+  startTransition,
+  ...tableProps
 }: UseDataTableProps<TData>) {
-  const { setSearchParam, getAllParamsValues } = useSearchParamsManager([
-    { key: 'page', defaultValue: '1' },
-    { key: 'limit' },
-    { key: 'sort' },
-  ]);
+  const queryStateOptions = useMemo<
+    Omit<UseQueryStateOptions<string>, 'parse'>
+  >(
+    () => ({
+      history,
+      scroll,
+      shallow,
+      throttleMs,
+      debounceMs,
+      clearOnDefault,
+      startTransition,
+    }),
+    [
+      history,
+      scroll,
+      shallow,
+      throttleMs,
+      debounceMs,
+      clearOnDefault,
+      startTransition,
+    ]
+  );
 
-  // Search params
-  const search = searchParamsSchema.parse(getAllParamsValues());
-  const page = search.page;
-  const limit = search.limit ?? props.initialState?.pagination?.pageSize ?? 10;
-  const sort =
-    search.sort ??
-    `${props.initialState?.sorting?.[0]?.id}.${
-      props.initialState?.sorting?.[0]?.desc ? 'desc' : 'asc'
-    }`;
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>(
+    initialState?.rowSelection ?? {}
+  );
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    initialState?.columnVisibility ?? {}
+  );
 
-  const [column, order] = sort?.split('.') ?? [];
+  const [page, setPage] = useQueryState(
+    PAGE_KEY,
+    parseAsInteger.withOptions(queryStateOptions).withDefault(1)
+  );
+  const [perPage, setPerPage] = useQueryState(
+    PER_PAGE_KEY,
+    parseAsInteger
+      .withOptions(queryStateOptions)
+      .withDefault(initialState?.pagination?.pageSize ?? 10)
+  );
 
-  const { searchableColumns, filterableColumns } = useMemo(() => {
+  const pagination: PaginationState = useMemo(() => {
     return {
-      searchableColumns: filterFields.filter((field) => !field.options),
-      filterableColumns: filterFields.filter((field) => field.options),
+      pageIndex: page - 1, // zero-based index -> one-based index
+      pageSize: perPage,
     };
-  }, [filterFields]);
+  }, [page, perPage]);
 
-  // Initial column filters
+  const onPaginationChange = useCallback(
+    (updaterOrValue: Updater<PaginationState>) => {
+      if (typeof updaterOrValue === 'function') {
+        const newPagination = updaterOrValue(pagination);
+
+        void setPage(newPagination.pageIndex + 1);
+        void setPerPage(newPagination.pageSize);
+      } else {
+        void setPage(updaterOrValue.pageIndex + 1);
+        void setPerPage(updaterOrValue.pageSize);
+      }
+    },
+    [pagination, setPage, setPerPage]
+  );
+
+  const columnIds = useMemo(() => {
+    return new Set(
+      columns.map((column) => column.id).filter(Boolean) as string[]
+    );
+  }, [columns]);
+
+  const [sorting, setSorting] = useQueryState(
+    SORT_KEY,
+    getSortingStateParser<TData>(columnIds)
+      .withOptions(queryStateOptions)
+      .withDefault(initialState?.sorting ?? [])
+  );
+
+  const onSortingChange = useCallback(
+    (updaterOrValue: Updater<SortingState>) => {
+      if (typeof updaterOrValue === 'function') {
+        const newSorting = updaterOrValue(sorting as any);
+
+        setSorting(newSorting as unknown as ExtendedColumnSort<TData>[]);
+      } else {
+        setSorting(updaterOrValue as unknown as ExtendedColumnSort<TData>[]);
+      }
+    },
+    [sorting, setSorting]
+  );
+
+  const filterableColumns = useMemo(() => {
+    if (enableAdvancedFilter) return [];
+
+    return columns.filter((column) => column.enableColumnFilter);
+  }, [columns, enableAdvancedFilter]);
+
+  const filterParsers = useMemo(() => {
+    if (enableAdvancedFilter) return {};
+
+    return filterableColumns.reduce<
+      Record<string, Parser<string> | Parser<string[]>>
+    >((acc, column) => {
+      if (column.meta?.options) {
+        acc[column.id ?? ''] = parseAsArrayOf(
+          parseAsString,
+          ARRAY_SEPARATOR
+        ).withOptions(queryStateOptions);
+      } else {
+        acc[column.id ?? ''] = parseAsString.withOptions(queryStateOptions);
+      }
+      return acc;
+    }, {});
+  }, [filterableColumns, queryStateOptions, enableAdvancedFilter]);
+
+  const [filterValues, setFilterValues] = useQueryStates(filterParsers);
+
+  const debouncedSetFilterValues = useDebouncedCallback(
+    (values: typeof filterValues) => {
+      void setPage(1);
+      void setFilterValues(values);
+    },
+    debounceMs
+  );
+
   const initialColumnFilters: ColumnFiltersState = useMemo(() => {
-    return Object.entries(getAllParamsValues()).reduce<ColumnFiltersState>(
+    if (enableAdvancedFilter) return [];
+
+    return Object.entries(filterValues).reduce<ColumnFiltersState>(
       (filters, [key, value]) => {
-        const filterableColumn = filterableColumns.find(
-          (column) => column.value === key
-        );
+        if (value !== null) {
+          const processedValue = Array.isArray(value)
+            ? value
+            : typeof value === 'string' && /[^a-zA-Z0-9]/.test(value)
+            ? value.split(/[^a-zA-Z0-9]+/).filter(Boolean)
+            : [value];
 
-        const searchableColumn = searchableColumns.find(
-          (column) => column.value === key
-        );
-
-        if (filterableColumn) {
           filters.push({
             id: key,
-            value: value!.split('.'),
-          });
-        } else if (searchableColumn) {
-          filters.push({
-            id: key,
-            value: [value!],
+            value: processedValue,
           });
         }
-
         return filters;
       },
       []
     );
-  }, [filterableColumns, searchableColumns, getAllParamsValues]);
+  }, [filterValues, enableAdvancedFilter]);
 
-  // Table states
   const [columnFilters, setColumnFilters] =
     useState<ColumnFiltersState>(initialColumnFilters);
-  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
-    pageIndex: page - 1,
-    pageSize: limit,
-  });
 
-  const pagination = useMemo(
-    () => ({
-      pageIndex,
-      pageSize,
-    }),
-    [pageIndex, pageSize]
+  const onColumnFiltersChange = useCallback(
+    (updaterOrValue: Updater<ColumnFiltersState>) => {
+      if (enableAdvancedFilter) return;
+
+      setColumnFilters((prev) => {
+        const next =
+          typeof updaterOrValue === 'function'
+            ? updaterOrValue(prev)
+            : updaterOrValue;
+
+        const filterUpdates = next.reduce<
+          Record<string, string | string[] | null>
+        >((acc, filter) => {
+          if (filterableColumns.find((column) => column.id === filter.id)) {
+            acc[filter.id] = filter.value as string | string[];
+          }
+          return acc;
+        }, {});
+
+        for (const prevFilter of prev) {
+          if (!next.some((filter) => filter.id === prevFilter.id)) {
+            filterUpdates[prevFilter.id] = null;
+          }
+        }
+
+        debouncedSetFilterValues(filterUpdates);
+        return next;
+      });
+    },
+    [debouncedSetFilterValues, filterableColumns, enableAdvancedFilter]
   );
 
-  const [sorting, setSorting] = useState<SortingState>([
-    {
-      id: column ?? '',
-      desc: order === 'desc',
-    },
-  ]);
-
-  useEffect(() => {
-    setSearchParam('page', (pageIndex + 1).toString());
-    setSearchParam('limit', pageSize.toString());
-    setSearchParam(
-      'sort',
-      sorting[0]?.id
-        ? `${sorting[0]?.id}.${sorting[0]?.desc ? 'desc' : 'asc'}`
-        : ''
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageIndex, pageSize, sorting]);
-
-  const debouncedSearchableColumnFilters = JSON.parse(
-    useDebounce(
-      JSON.stringify(
-        columnFilters.filter((filter) => {
-          return searchableColumns.find((column) => column.value === filter.id);
-        })
-      ),
-      500
-    )
-  ) as ColumnFiltersState;
-
-  const filterableColumnFilters = columnFilters.filter((filter) => {
-    return filterableColumns.find((column) => column.value === filter.id);
-  });
-
-  const [mounted, setMounted] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (enableAdvancedFilter) return;
-
-    if (!mounted) return setMounted(true);
-
-    for (const column of debouncedSearchableColumnFilters) {
-      setSearchParam(column.id as any, column.value as string);
-    }
-
-    for (const column of filterableColumnFilters) {
-      setSearchParam(column.id as any, (column.value as Array<any>).join('.'));
-    }
-
-    table.setPageIndex(0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    JSON.stringify(debouncedSearchableColumnFilters),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    JSON.stringify(filterableColumnFilters),
-  ]);
-
   const table = useReactTable({
-    ...props,
+    ...tableProps,
+    columns,
+    initialState,
     pageCount,
     state: {
       pagination,
@@ -200,11 +275,15 @@ export function useDataTable<TData>({
       rowSelection,
       columnFilters,
     },
+    defaultColumn: {
+      ...tableProps.defaultColumn,
+      enableColumnFilter: false,
+    },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
-    onPaginationChange: setPagination,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
+    onPaginationChange,
+    onSortingChange,
+    onColumnFiltersChange,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -212,10 +291,11 @@ export function useDataTable<TData>({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFacetedMinMaxValues: getFacetedMinMaxValues(),
     manualPagination: true,
     manualSorting: true,
     manualFiltering: true,
   });
 
-  return table;
+  return { table, shallow, debounceMs, throttleMs };
 }
