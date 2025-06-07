@@ -35,7 +35,7 @@ export function AppBooleanField({
 
   return (
     <FormItem>
-      <div className={cn('flex gap-2 items-center flex-col', className)}>
+      <div className={cn('flex gap-2 items-start flex-col', className)}>
         <Label htmlFor={fieldId} aria-disabled={isSubmitting}>
           {label}
         </Label>
@@ -46,6 +46,7 @@ export function AppBooleanField({
           name={field.name}
           id={fieldId}
           disabled={isSubmitting}
+          className="cursor-pointer"
         />
       </div>
       <FieldInfo field={field} />
