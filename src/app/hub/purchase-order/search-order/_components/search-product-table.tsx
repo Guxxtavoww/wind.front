@@ -53,12 +53,12 @@ export function SearchProductTable() {
     ],
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    // getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     enableRowSelection: true,
   });
 
-  return <DataTable table={table} className="mx-3" />;
+  return <DataTable table={table} className="px-3" hasPagination={false} />;
 }
