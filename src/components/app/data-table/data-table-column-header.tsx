@@ -62,7 +62,7 @@ export function DataTableColumnHeader<TData, TValue>({
                   className="mr-2 size-3.5 text-muted-foreground/70"
                   aria-hidden="true"
                 />
-                Asc
+                Crescente
               </DropdownMenuItem>
               <DropdownMenuItem
                 aria-label="Sort descending"
@@ -72,7 +72,7 @@ export function DataTableColumnHeader<TData, TValue>({
                   className="mr-2 size-3.5 text-muted-foreground/70"
                   aria-hidden="true"
                 />
-                Desc
+                Decrescente
               </DropdownMenuItem>
             </>
           )}
