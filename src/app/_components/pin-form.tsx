@@ -22,7 +22,9 @@ export function PinForm() {
   return (
     <form
       className="flex items-center gap-3 flex-col"
-      action={(data) => mutateAsync(data)}
+      action={(data) => {
+        mutateAsync(data);
+      }}
     >
       <InputWithIcons
         placeholder="Insira seu pin"
