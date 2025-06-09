@@ -33,7 +33,7 @@ export default function RootLayout({ children }: WithChildren) {
             >
               {children}
               <Toaster />
-              <Footer />
+              {/* <Footer /> */}
             </ThemeProvider>
           </TanstackQueryProvider>
         </NuqsAdapter>
