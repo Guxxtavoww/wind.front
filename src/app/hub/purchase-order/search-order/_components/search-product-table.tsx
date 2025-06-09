@@ -46,5 +46,5 @@ export function SearchProductTable() {
     ],
   });
 
-  return <DataTable table={table} className="px-3" hasPagination={false} />;
+  return <DataTable table={table} className="px-3" />;
 }
