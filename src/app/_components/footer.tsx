@@ -10,7 +10,7 @@ export function Footer() {
       >
         Gustavo Augusto Cardoso de Almeida
       </Link>{' '}
-      & Ricardo Leggieri Assenza &copy; {new Date().getFullYear()}
+      &copy; {new Date().getFullYear()}
     </footer>
   );
 }
