@@ -3,17 +3,14 @@
 import { useMemo } from 'react';
 
 import { DataTable } from '@/components/app/data-table';
-import { useDataTable } from '@/hooks/use-data-table.hook';
+import { useAppDataTable } from '@/hooks/use-app-data-table.hook';
 
-import {
-  getSearchProductsTableColumns,
-  IProduct,
-} from './search-product-table-columns';
+import { getSearchProductsTableColumns } from './search-product-table-columns';
 
 export function SearchProductTable() {
   const columns = useMemo(() => getSearchProductsTableColumns(), []);
 
-  const { table } = useDataTable<IProduct>({
+  const { table } = useAppDataTable({
     columns,
     data: [
       {
@@ -47,13 +44,6 @@ export function SearchProductTable() {
         solicitor: 'David Lee',
       },
     ],
-    getRowId: (originalRow) => originalRow.internal_code,
-    pageCount: 1,
-    shallow: false,
-    clearOnDefault: true,
-    initialState: {
-      sorting: [{ id: 'date', desc: true }],
-    },
   });
 
   return <DataTable table={table} className="px-3" hasPagination={false} />;
