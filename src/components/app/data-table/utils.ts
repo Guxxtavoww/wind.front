@@ -115,6 +115,7 @@ export function exportTableToCSV<TData>(
   const headers = table
     .getAllLeafColumns()
     .map((column) => column.id)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .filter((id) => !excludeColumns.includes(id as any));
 
   const defaultRows = table.getRowModel().rows;

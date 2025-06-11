@@ -7,14 +7,16 @@ import {
   TriangleAlert,
 } from 'lucide-react';
 
+type Href = `/${string}`;
+
 type Submenu = {
-  href: string;
+  href: Href;
   label: string;
   active?: boolean;
 };
 
 type Menu = {
-  href: string;
+  href: Href;
   label: string;
   active?: boolean;
   icon: LucideIcon;

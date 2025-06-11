@@ -28,8 +28,6 @@ interface DataTableProps<TData> extends HTMLAttributes<HTMLDivElement> {
    * @example floatingBar={<TasksTableFloatingBar table={table} />}
    */
   floatingBar?: NullableValue<ReactNode>;
-
-  hasPagination?: boolean;
 }
 
 export function DataTable<TData>({
@@ -37,7 +35,6 @@ export function DataTable<TData>({
   floatingBar = null,
   children,
   className,
-  hasPagination = true,
   ...props
 }: DataTableProps<TData>) {
   return (
@@ -107,12 +104,10 @@ export function DataTable<TData>({
           </TableBody>
         </Table>
       </div>
-      {hasPagination ? (
-        <div className="flex flex-col gap-2.5">
-          <DataTablePagination table={table} />
-          {table.getFilteredSelectedRowModel().rows.length > 0 && floatingBar}
-        </div>
-      ) : null}
+      <div className="flex flex-col gap-2.5">
+        <DataTablePagination table={table} />
+        {table.getFilteredSelectedRowModel().rows.length > 0 && floatingBar}
+      </div>
     </div>
   );
 }

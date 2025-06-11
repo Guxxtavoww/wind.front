@@ -7,23 +7,7 @@ export default function SearchOrderPage() {
   return (
     <div className="w-full h-[calc(100svh-10rem)] bg-widget-bg rounded-md py-6">
       <SearchProductForm />
-      <Suspense
-        fallback={
-          <DataTableSkeleton
-            columnCount={7}
-            cellWidths={[
-              '10rem',
-              '30rem',
-              '10rem',
-              '10rem',
-              '6rem',
-              '6rem',
-              '6rem',
-            ]}
-            shrinkZero
-          />
-        }
-      >
+      <Suspense fallback={<DataTableSkeleton columnCount={7} />}>
         <SearchProductTable />
       </Suspense>
     </div>

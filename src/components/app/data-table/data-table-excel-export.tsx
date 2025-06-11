@@ -1,6 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
 import { ArrowRightFromLine } from 'lucide-react';
 import type { Table } from '@tanstack/react-table';
 
@@ -15,22 +14,20 @@ interface DataTableExcelExportProps<T> {
   table: Table<T>;
   className?: string;
   export_type?: ExportType;
+  fileName?: string;
 }
 
 export function DataTableExcelExport<T>({
   table,
   className,
   export_type,
+  fileName = 'arquivo',
 }: DataTableExcelExportProps<T>) {
-  const rows = useMemo(() => table.getFilteredRowModel().rows, [table]);
-
-  if (!rows.length) return null;
-
   async function exportToExcel() {
     const { exportTableToCSV } = await import('./utils');
 
     exportTableToCSV(table, {
-      filename: 'financas',
+      filename: fileName,
       excludeColumns: ['select', 'actions'],
       export_type,
     });
@@ -39,7 +36,7 @@ export function DataTableExcelExport<T>({
   return (
     <CustomTooltip tooltipText="Exportar Para Excel">
       <Button
-        className={cn('inline-flex items-center gap-2 w-full', className)}
+        className={cn('inline-flex items-center gap-2', className)}
         variant="outline"
         onClick={exportToExcel}
       >

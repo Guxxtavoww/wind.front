@@ -10,9 +10,8 @@ import { getSearchProductsTableColumns } from './search-product-table-columns';
 export function SearchProductTable() {
   const columns = useMemo(() => getSearchProductsTableColumns(), []);
 
-  const { table } = useAppDataTable({
-    columns,
-    data: [
+  const data = useMemo(
+    () => [
       {
         date: '2025-06-07',
         quantity: 10,
@@ -44,6 +43,12 @@ export function SearchProductTable() {
         solicitor: 'David Lee',
       },
     ],
+    []
+  );
+
+  const { table } = useAppDataTable({
+    columns,
+    data,
   });
 
   return <DataTable table={table} className="px-3" />;
