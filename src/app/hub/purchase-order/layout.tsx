@@ -3,7 +3,7 @@ import { PurchaseOrderLayout as PurchaseOrderLayoutC } from './_components/purch
 export default async function PurchaseOrderLayout({ children }: WithChildren) {
   return (
     <PurchaseOrderLayoutC>
-      <div className="w-full min-h-(--content-height) flex justify-center items-center p-5">
+      <div className="w-full min-h-(--content-height) flex justify-center items-center py-3.5 px-5">
         {children}
       </div>
     </PurchaseOrderLayoutC>

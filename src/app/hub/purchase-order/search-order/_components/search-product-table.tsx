@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 
 import { DataTable } from '@/components/app/data-table';
 import { useAppDataTable } from '@/hooks/use-app-data-table.hook';
+import { DataTableExcelExport } from '@/components/app/data-table/data-table-excel-export';
 
 import { getSearchProductsTableColumns } from './search-product-table-columns';
 
@@ -51,5 +52,9 @@ export function SearchProductTable() {
     data,
   });
 
-  return <DataTable table={table} className="px-3" />;
+  return (
+    <DataTable table={table} className="px-3">
+      <DataTableExcelExport table={table} />
+    </DataTable>
+  );
 }

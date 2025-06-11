@@ -96,7 +96,7 @@ export function getCommonPinningStyles<TData>({
   };
 }
 
-export type ExportType = 'selected' | 'all' | 'default';
+export type ExportType = 'selected' | 'all' | 'default' | 'xlsx';
 
 interface ExportTableToCSVArgs<TData> {
   filename?: string;
