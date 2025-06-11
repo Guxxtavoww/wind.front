@@ -41,7 +41,7 @@ export function PurchaseOrderForm() {
   return (
     <AppForm
       form={form}
-      className="grid grid-cols-2 w-full min-h-[calc(100svh-10rem)] bg-widget-bg rounded-md p-14"
+      className="grid grid-cols-2 w-full min-h-[calc(100svh-10rem)] bg-widget-bg rounded-md p-14 gap-x-6"
     >
       <form.AppField
         name="product"
