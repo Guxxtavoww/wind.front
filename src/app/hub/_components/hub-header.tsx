@@ -35,7 +35,7 @@ export function HubHeader() {
 
   return (
     <header className="w-full h-20 flex items-center justify-between bg-widget-bg px-7 fixed top-0 z-50 backdrop-blur-sm">
-      <div />
+      <div className="w-[90px]" />
       <h2 className="text-xl font-medium">{title}</h2>
       <div className="flex items-center gap-3">
         <ModeToggle />

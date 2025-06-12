@@ -32,7 +32,10 @@ export function PurchaseOrderForm() {
       onChange: purchaseOrderFormSchema,
       onSubmit: purchaseOrderFormSchema,
     },
-    defaultValues: {} as PurchaseOrderFormType,
+    defaultValues: {
+      is_contract: false,
+      is_urgent: false,
+    } as PurchaseOrderFormType,
     onSubmit: ({ value }) => {
       console.log(JSON.stringify(value, null, 2));
     },

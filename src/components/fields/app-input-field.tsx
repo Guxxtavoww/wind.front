@@ -80,7 +80,7 @@ export function AppInputField({
           id={fieldId}
           name={field.name}
           placeholder={placeholder}
-          value={field.state.value}
+          value={field.state.value || ''}
           onBlur={field.handleBlur}
           autoComplete={`current-${field.name}`}
           onChange={(e) => field.handleChange(applyMask(e.target.value))}
@@ -92,7 +92,7 @@ export function AppInputField({
           id={fieldId}
           name={field.name}
           placeholder={placeholder}
-          value={field.state.value}
+          value={type === 'text' ? field.state.value || '' : field.state.value}
           onBlur={field.handleBlur}
           type={type}
           autoComplete={`current-${field.name}`}

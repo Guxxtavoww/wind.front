@@ -12,11 +12,13 @@ import { pinAction } from '../_actions/pin.action';
 
 export function PinForm() {
   const router = useRouter();
+
   const { mutateAsync, isPending, disabled } = useMutationWithToast({
     mutationKey: ['pin'],
     mutationFn: async (data: FormData) => pinAction(data),
     onSuccess: () => router.replace('/hub'),
     toastCustomSuccessMessage: 'Login realizado com sucesso!',
+    toastCustomError: 'Credenciais inválidas',
   });
 
   return (
